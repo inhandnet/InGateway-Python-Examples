@@ -55,11 +55,27 @@ def iothub_client_init():
     client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING, server_verification_cert=CERTIFICATES)
     return client
 
+# define behavior for receiving a message
+def message_listener(device_client):
+    while True:
+        message = device_client.receive_message()  # blocking call
+        print("the data in the message received was ")
+        print(message.data)
+        print("custom properties are")
+        print(message.custom_properties)
+
 def iothub_client_telemetry_sample_run():
 
     try:
         client = iothub_client_init()
         print ( "IoT Hub device sending periodic messages, press Ctrl-C to exit" )
+
+        # connect the client.
+        client.connect()
+        # Run a listener thread in the background
+        listen_thread = threading.Thread(target=message_listener, args=(client,))
+        listen_thread.daemon = True
+        listen_thread.start()
 
         while True:
             # Build the message with telemetry values.
@@ -94,6 +110,8 @@ def iothub_client_telemetry_sample_run():
         print ( "IoTHubClient sample stopped" )
     process.done		= True
     poller.join()
+    # finally, disconnect
+    client.disconnect()
 
 if __name__ == '__main__':
     print ( "IoT Hub Quickstart #1 - PLC device" )
