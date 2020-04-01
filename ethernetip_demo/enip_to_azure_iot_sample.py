@@ -2,6 +2,7 @@
 
 import random
 import time
+import json
 
 # Using the Python Device SDK for IoT Hub:
 #   https://github.com/Azure/azure-iot-sdk-python
@@ -22,7 +23,7 @@ import cpppo
 from cpppo.server.enip import poll
 from cpppo.server.enip.get_attribute import proxy as device
 
-hostname = sys.argv[1] if len(sys.argv) > 1 else 'localhost'
+address = (sys.argv[1] if len(sys.argv) > 1 else 'localhost', 44818)
 # Parameters valid for device; for *Logix, others, try:
 params = ['INHAND:I.Data[0]', 'T1']
 
@@ -34,13 +35,12 @@ def process(par, val):
     process.values[par] = val
 process.done = False
 process.values = {}  # { <parameter>: <value>, ... }
-
-poller				= threading.Thread(
+# Initialize an EtherNet/IP CIP proxy instance
+via = device(host=address[0], port=address[1], timeout=1)
+poller = threading.Thread(
     target=poll.poll, kwargs={
-        'proxy_class':  device,
-        'address': 	(hostname, 44818),
+        'via': 	via,
         'cycle':	1.0,
-        'timeout':	0.5,
         'process':	process,
         'failure':	failure,
         'params':	params,
@@ -61,8 +61,28 @@ def message_listener(device_client):
         message = device_client.receive_message()  # blocking call
         print("the data in the message received was ")
         print(message.data)
+        # eg. {"symbol": "T1", "value": 123, "data_type": "DINT"}
+        # Write parameter
+        try:
+            write_msg = json.loads(message.data)
+            if not instance(write_msg, dict):
+                raise json.decoder.JSONDecodeError("Unsupported message.")
+            if "symbol" not in write_msg or "value" not in write_msg or "data_type" not in write_msg:
+                print("Missing required field 'symbol' or 'value' or 'data_type'.")
+                continue
+            # Write a data to plc, # format: '<symbol>=(<data type>)<value>'
+            param = '%s = (%s)%s' % (write_msg["symbol"], write_msg["data_type"].upper(), write_msg["value"])
+            with via:  # Establish gateway, detects Exception (closing gateway)
+                val, = via.write(via.parameter_substitution(param), checking=True)
+                print("%s: %-32s == %s" % (time.ctime(), param, val))
+        except json.decoder.JSONDecodeError as exc:
+            print("Unsupported message, need format is {'symbol': 'xxx', 'value': xxx, 'data_type': 'xxx'}")
+        except Exception as exc:
+            print("Exception writing Parameter: %s", exc)
+            failure(exc)
         print("custom properties are")
         print(message.custom_properties)
+        time.sleep(1)
 
 def iothub_client_telemetry_sample_run():
 
