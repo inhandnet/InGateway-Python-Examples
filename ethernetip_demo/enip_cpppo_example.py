@@ -32,7 +32,7 @@ failed = []  # format: [ (<timer>, <exc>), ... ]
 
 # Capture a timestamp with each event
 def failure(exc):
-    failed.append((cpppo.timer(), str(exc)))
+    failed.append((cpppo.timer(), str(exc)))  # On Linux, the best timer is time.time. (cpppo.timer = time.time)
 
 
 # Process the acquired data
@@ -72,6 +72,14 @@ try:
             # Write a random data to T3
             param = 'T3 = (DINT)%s' % (random.randint(0, 100))  # format: '<symbol>=(<data type>)<value>'
             with via:  # Establish gateway, detects Exception (closing gateway)
+                # the .parameter_substitution method deduces that you want one named parameter value.
+                # Provide a sequence of attributes to read more than one.
+                # Transforms bare names by stripping surrounding whitespace, lowering case, and substituting
+                # intervening whitespace with underscores, eg. iterable = ' Output Freq ' --> parameters['output_freq'].
+
+                # The .write method support writing to CIP Attributes. 
+                # If parameters 'checking' is True, an Exception is raised if any erroneous reply status is detected,
+                # even if all operations completed without raising Exception. 
                 val, = via.write(via.parameter_substitution(param), checking=True)
                 print("%s: %-32s == %s" % (time.ctime(), param, val))
         except Exception as exc:
