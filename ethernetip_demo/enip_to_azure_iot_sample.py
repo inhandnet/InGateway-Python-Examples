@@ -65,7 +65,7 @@ def message_listener(device_client):
         # Write parameter
         try:
             write_msg = json.loads(message.data)
-            if not instance(write_msg, dict):
+            if not isinstance(write_msg, dict):
                 raise json.decoder.JSONDecodeError("Unsupported message.")
             if "symbol" not in write_msg or "value" not in write_msg or "data_type" not in write_msg:
                 print("Missing required field 'symbol' or 'value' or 'data_type'.")
