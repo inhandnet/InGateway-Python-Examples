@@ -1,7 +1,7 @@
 # Demo of the EtherNet/IP to Azure IoT
 
  - [概述](#概述)
- - [先决条件（Prerequisites）](#先决条件prerequisites)
+ - [先决条件](#先决条件)
  - [环境准备](#环境准备)
  - [开始测试](#开始测试)
 
