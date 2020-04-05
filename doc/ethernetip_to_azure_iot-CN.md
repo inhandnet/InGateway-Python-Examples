@@ -7,28 +7,28 @@
 
 ## 概述
 EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）的工业以太网协议，采用标准的EtherNet和TCP／IP技术来传送CIP通信包，主要用于网络实时控制应用，通常情况下，使用星型拓扑结构。EIP支持在同一链路上完整实现设备组态（配置）、实时控制（控制）、信息采集（数据采集）等全部网络功能，具备以下特点：  
+- EIP使用TCP传递显式消息，使用UDP传递隐式消息
 - 通过基于用户数据报协议（UDP）的隐式消息传递基本I/O数据  
-- 通过TCP（即显示消息传递）上载和下载参数，设定值，程序和配方  
-- 通过UDP进行轮询，循环和状态更改监视  
-- EIP使用TCP传递显式消息，使用UDP传递隐式消息  
+- 通过TCP（即显式消息传递）上载和下载参数，设定值，程序和配方  
+- 通过UDP进行轮询，循环和状态更改监视    
 
-为便于客户基于IG902二次开发实现采集EIP数据并上传至Azure云平台，映翰通提供以下三个demo示例（本文档主要对`enip_to_azure_iot_sample`进行说明）：  
+为便于客户基于InGateway二次开发实现采集EIP数据并上传至Azure云平台，映翰通提供以下三个demo示例（本文档主要对`enip_to_azure_iot_sample`进行说明）：  
 - `enip_cpppo_example`：通过EIP协议读写PLC数据  
 - `iothub_client_sample`：上传数据至Azure IoT并接收Azure IoT下发的数据  
 - `enip_to_azure_iot_sample`：采集EIP数据并上传Azure IoT以及通过Azure IoT远程修改EIP Scanner数据值。（即enip_cpppo_example和iothub_client_sample的整合版）  
 
 `enip_to_azure_iot_sample`的流程拓扑如下图所示：  
 
-![](images/2020-03-31-20-33-15.png)  
+![](images/2020-04-05-23-38-56.png)  
 
 示例`enip_to_azure_iot_sample`的接线拓扑如下所示:  
 
-![](images/2020-04-03-10-51-56.png)
+![](images/2020-04-05-23-39-19.png)
 
 ## 先决条件
 在进行开发和测试前，你需要具备以下条件：  
 - 硬件设备  
-  - IG902网关  
+  - InGateway  
     - 网关固件版本：`2.0.0.r12191`及以上  
     - 网关SDK版本：`1.3.4`及以上  
   - EtherNet/IP Scanner设备（本文档使用1756-L61S & 1756-ENET/B）以及EtherNet/IP adapter设备  
@@ -66,7 +66,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   ![](images/add-ethadapter-module.gif)  
 
-  EIP Adapter添加完成后在Controller Tags中可以看到EIP Adapter模块映射的变量。  
+  EIP Adapter添加完成后在“Controller Tags”中可以看到EIP Adapter模块映射的变量。  
 
   ![](images/2020-04-01-10-22-35.png)  
 
@@ -121,7 +121,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 ### 配置开发环境  
 - [网关配置](#gateway-configuration)  
 - [建立项目文件夹](#create-project-folder)  
-- [在VS Code中安装Azure IoT Tools插件](#install-azure-ioi-iools-plugin)  
+- [在VS Code中安装Azure IoT Tools插件](#install-azure-iot-tools-plugin)  
 - [安装cpppo](#install-cpppo)  
 - [安装Azure IoT SDK](#install-azure-iot-sdk)  
 
@@ -137,7 +137,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
   - `enip_to_azure_iot_sample.py`：主要基于Ethernet/IP软件开发包`cpppo`和`Azure IoT Python SDK`实现采集EIP数据并上传Azure IoT以及通过Azure IoT远程修改EIP Scanner数据值。你只需要简单修改`enip_to_azure_iot_sample.py`即可用于你的EIP Scanner进行测试。   
   - `enip_to_azure_iot_cert.py`：连接Azure IoT所需的证书脚本，直接使用即可，无需修改。  
 
-<a id="install-azure-ioi-iools-plugin"> </a>  
+<a id="install-azure-iot-tools-plugin"> </a>  
 
 - 在VS Code中安装Azure IoT Tools插件  
 在VS Code中点击“Extensions”，在搜索框中输入`Azure IoT Tools`并安装`Azure IoT Tools`插件。  
@@ -151,7 +151,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 <a id="install-cpppo"> </a> 
 
 - 安装`cpppo`  
-使用VS Code打开项目文件夹，在命令面板中输入`>SFTP:Config` 命令快速创建`sftp.json`文件用于建立与IG902的SFTP连接。  
+使用VS Code打开项目文件夹，在“命令面板”中输入`>SFTP:Config` 命令快速创建`sftp.json`文件用于建立与InGateway的SFTP连接。  
 
   ![](images/2020-04-01-19-55-23.png)  
 
@@ -159,7 +159,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   ![](images/2020-04-01-20-34-55.png)  
 
-  配置完成并保存后在命令面板中输入`>SFTP:Open SSH in Terminal`以连接IG902。  
+  配置完成并保存后在“命令面板”中输入`>SFTP:Open SSH in Terminal`以连接InGateway。  
 
   ![](images/2020-04-01-20-03-42.png)  
 
@@ -171,11 +171,11 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   ![](images/2020-04-01-20-35-30.png)  
 
-  成功与MobiusPi建立SFTP连接后如下图所示：  
+  成功与网关建立SFTP连接后如下图所示：  
 
   ![](images/2020-04-01-20-06-20.png)  
 
-  在终端中输入`pip install cpppo --user`命令以安装cpppo依赖库。<font color=#FF0000>(安装前请确认IG902已经联网成功)</font>  
+  在“终端”中输入`pip install cpppo --user`命令以安装cpppo依赖库。<font color=#FF0000>(安装前请确认InGateway已经联网成功)</font>  
 
   ![](images/2020-04-01-20-08-17.png)  
 
@@ -186,7 +186,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 <a id="install-azure-iot-sdk"> </a> 
 
 - 安装Azure IoT SDK  
-在终端中输入`pip install azure-iot-device --user`命令以安装Azure IoT SDK。  
+在“终端”中输入`pip install azure-iot-device --user`命令以安装Azure IoT SDK。  
 
   ![](images/2020-04-01-20-20-40.png)  
 
@@ -210,11 +210,11 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 <a id="collect-eip-data-locally"> </a>
 
 - 步骤2：本地采集EIP数据   
-与IG902建立SFTP连接成功后，在左侧空白处右键选择“Sync Local->Remote”将代码同步到IG902，同步成功后本地修改或者删除代码时都会自动和IG902同步。  
+与InGateway建立SFTP连接成功后，在左侧空白处右键选择“Sync Local->Remote”将代码同步到InGateway，同步成功后本地修改或者删除代码时都会自动和InGateway同步。  
 
   ![](images/2020-04-01-20-37-00.png)  
 
-  在终端窗口输入`cd /var/user`进入`enip_to_azure_iot_sample.py`所在的网关目录  
+  在“终端”窗口输入`cd /var/user`进入`enip_to_azure_iot_sample.py`所在的网关目录  
 
   ![](images/2020-04-01-20-38-00.png)  
 
@@ -239,38 +239,38 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   ![](images/2020-04-02-13-48-18.png)  
 
-  IoT Hub连接字符串可从Azure IoT Hub页面复制。  
+  IoT Hub连接字符串可从“Azure IoT Hub”页面复制。  
 
   ![](images/2020-04-02-13-49-28.png)  
 
-  输入IoT Hub Connetion String后可以看到该IoT Hub下的IoT Device且状态为Connected。  
+  输入IoT Hub Connetion String后可以看到该IoT Hub下的“IoT Device”且状态为Connected。  
 
   ![](images/2020-04-02-13-50-44.png)  
 
-  右击IoT Device并在菜单中选择`Start Monitoring Built-in Event Endpoint`以查看网关推送到IoT Hub的EIP数据。  
+  右击“IoT Device”并在菜单中选择`Start Monitoring Built-in Event Endpoint`以查看网关推送到IoT Hub的EIP数据。  
 
   ![](images/2020-04-02-13-51-53.png)  
 
-  随后在输出窗口可以查看IoT Hub接收到的EIP数据。  
+  随后在“输出”窗口可以查看IoT Hub接收到的EIP数据。  
 
   ![](images/2020-04-02-13-53-54.png)  
 
 <a id="send-data"> </a>
 
 - 步骤4：使用Azure IoT Tools下发数据  
-右击IoT Device并在菜单中选择`Send C2D Message to Device`以下发数据至网关。  
+右击“IoT Device”并在菜单中选择`Send C2D Message to Device`以下发数据至网关。  
 
   ![](images/2020-04-02-13-54-47.png)  
 
-  在下发框中输入如下命令`{"symbol": "INHAND:O.Data[0]", "value": 22.6, "data_type": "REAL"}`（symbol为EIP数据标签；value为EIP数值；data_type为EIP数据类型）。  
+  在下发框中输入如下命令`{"symbol": "INHAND:O.Data[0]", "value": 22.6, "data_type": "REAL"}`（“symbol”为EIP数据标签；“value”为EIP数值；“data_type”为EIP数据类型）。  
 
   ![](images/2020-04-02-14-00-30.png)  
 
-  在输出窗口出现下图所示日志说明数据下发成功：  
+  在“输出”窗口出现下图所示日志说明数据下发成功：  
 
   ![](images/2020-04-02-13-57-48.png)  
 
-  随后可在终端中查看网关接收到的下发数据。  
+  随后可在“终端”中查看网关接收到的下发数据。  
 
   ![](images/2020-04-02-14-02-02.png)  
 
