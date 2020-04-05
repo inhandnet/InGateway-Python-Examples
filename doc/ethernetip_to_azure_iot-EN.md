@@ -43,6 +43,8 @@ Before starting development and tests, you need to get the following items ready
   - [Configuring the Azure IoT](#configuring-the-azure-iot)  
   - [Configuring the Development Environment](#configuring-the-development-environment)  
 
+<a id="configuring-the-eip-scanner-adapter"> </a>
+
 ### Configuring the EIP Scanner & Adapter  
 If you already build the EIP Scanner & Adapter environment, skip this section.
 - Step 1: Create a project.  
