@@ -7,7 +7,7 @@ import threading
 
 # Using the Python Device SDK for IoT Hub:
 #   https://github.com/Azure/azure-iot-sdk-python
-# The sample connects to a device-specific MQTT endpoint on your IoT Hub.
+# The example connects to a device-specific MQTT endpoint on your IoT Hub.
 from azure.iot.device import IoTHubDeviceClient, Message
 from iothub_client_cert import CERTIFICATES
 
@@ -39,7 +39,7 @@ def message_listener(device_client):
         print(message.custom_properties)
 
 
-def iothub_client_telemetry_sample_run():
+def iothub_client_telemetry_example_run():
 
     try:
         client = iothub_client_init()
@@ -74,9 +74,9 @@ def iothub_client_telemetry_sample_run():
     except KeyboardInterrupt:
         # finally, disconnect
         client.disconnect()
-        print ( "IoTHubClient sample stopped" )
+        print ( "IoTHubClient example stopped" )
 
 if __name__ == '__main__':
     print ( "IoT Hub Quickstart #1 - Simulated device" )
     print ( "Press Ctrl-C to exit" )
-    iothub_client_telemetry_sample_run()
+    iothub_client_telemetry_example_run()

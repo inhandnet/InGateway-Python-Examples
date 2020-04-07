@@ -11,7 +11,7 @@ import json
 
 # Using the Python Device SDK for IoT Hub:
 #   https://github.com/Azure/azure-iot-sdk-python
-# The sample connects to a device-specific MQTT endpoint on your IoT Hub.
+# The example connects to a device-specific MQTT endpoint on your IoT Hub.
 from azure.iot.device import IoTHubDeviceClient, Message
 from enip_to_azure_iot_cert import CERTIFICATES
 
@@ -97,7 +97,7 @@ def message_listener(device_client):
         time.sleep(1)
 
 
-def iothub_client_telemetry_sample_run():
+def iothub_client_telemetry_example_run():
     try:
         client = iothub_client_init()
         print("IoT Hub device sending periodic messages, press Ctrl-C to exit")
@@ -134,7 +134,7 @@ def iothub_client_telemetry_sample_run():
             time.sleep(1)
 
     except KeyboardInterrupt:
-        print("IoTHubClient sample stopped")
+        print("IoTHubClient example stopped")
     process.done = True
     poller.join()
     # finally, disconnect
@@ -144,4 +144,4 @@ def iothub_client_telemetry_sample_run():
 if __name__ == '__main__':
     print("IoT Hub Quickstart #1 - PLC device")
     print("Press Ctrl-C to exit")
-    iothub_client_telemetry_sample_run()
+    iothub_client_telemetry_example_run()

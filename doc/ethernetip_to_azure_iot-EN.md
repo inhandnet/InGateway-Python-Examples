@@ -1,4 +1,4 @@
-# EtherNet/IP to Azure IoT Example
+# EtherNet/IP to Azure IoT Hub Example
 
  - [Overview](#overview)
  - [Prerequisites](#prerequisites)
@@ -12,18 +12,18 @@ EtherNet/IP (EIP) is an industrial Ethernet protocol based on TCP/IP and Common 
 - Uploads and downloads parameters, settings, programs, and formulas over TCP (that is, explicit message transfer).   
 - Conducts polling, loop, and status change monitoring through UDP. 
 
-To allow you implement secondary development based on InGateway so as to collect EIP data and upload data to the Azure cloud platform, InHand provides the following three demos (the demo `enip_to_azure_iot_sample` is mainly described in this document):   
-- `enip_cpppo_example`：Used to read and write PLC data over EIP.  
-- `iothub_client_sample`：Used to upload data to the Azure IoT and receive data from the Azure IoT.  
-- `enip_to_azure_iot_sample`：Used to collect EIP data, upload the data to the Azure IoT, and remotely modify the EIP Scanner data value through the Azure IoT. That is, enip_to_azure_iot_sample integrates enip_cpppo_example with iothub_client_sample.   
+To allow you implement secondary development based on InGateway so as to collect EIP data and upload data to the Azure IoT Hub, InHand provides the following three demos (the demo `enip_to_azure_iot_example` is mainly described in this document):   
+- `ethernetip/enip_cpppo_example`：Used to read and write PLC data over EIP.  
+- `azure_iot_device/iothub_client_example`：Used to upload data to the Azure IoT Hub and receive data from the Azure IoT Hub.  
+- `ethernetip_to_azure_iot/enip_to_azure_iot_example`：Used to collect EIP data, upload the data to the Azure IoT Hub, and remotely modify the EIP Scanner data value through the Azure IoT Hub. That is, enip_to_azure_iot_example integrates enip_cpppo_example with iothub_client_example.   
 
-The process topology of `enip_to_azure_iot_sample` is shown as follows:  
+The data process of `enip_to_azure_iot_example` is shown as follows:  
 
-![](images/2020-04-05-23-38-56.png)  
+![](images/2020-04-07-09-04-31.png)  
 
-The connection topology of `enip_to_azure_iot_sample` is shown as follows:  
+The connection topology of `enip_to_azure_iot_example` is shown as follows:  
 
-![](images/2020-04-05-23-39-19.png)
+![](images/2020-04-07-12-05-44.png)
 
 ## Prerequisites 
 Before starting development and tests, you need to get the following items ready:   
@@ -131,13 +131,15 @@ On the IoT Hub, create an IoT device.
 <a id="gateway-configuration"> </a>   
 
 - Configuring the InGateway  
-For details about basic configuration operations, such as connecting the InGateway to the Internet, updating the software, and obtaining the IDE software, see [MobiusPi Python Development Quick Start](http://doc.ig.inhand.com.cn/zh_CN/latest/QuickStart.html). In the following operations, it is assumed that you have updated the InGateway software, connected the InGateway to the Internet, and enabled the debugging mode.  
+For details about basic configuration operations, such as connecting the InGateway to the Internet, updating the software, and obtaining the IDE software, see [MobiusPi Python Development Quick Start](http://doc.ig.inhandnetworks.com/en/latest/QuickStart.html). In the following operations, it is assumed that you have updated the InGateway software, connected the InGateway to the Internet, and enabled the debugging mode.  
 
 <a id="create-project-folder"> </a>  
 
 - Creating a project folder  
-Create a project folder named **Demo test**, and move `enip_to_azure_iot_sample.py` and `enip_to_azure_iot_cert.py` downloaded from [Python-Demo](https://github.com/inhandnet/Python-Demo) to this folder.   
-  - `enip_to_azure_iot_sample.py`：Based on Ethernet/IP software development kits `cpppo` and `Azure IoT Python SDK`, this demo is mainly used to collect EIP data, upload the data to the Azure IoT, and remotely modify the EIP Scanner data value through the Azure IoT. You only need to make some simple modifications to use `enip_to_azure_iot_sample.py` in your EIP Scanner for testing.   
+Create a project folder named **Demo test**, and move `enip_to_azure_iot_example.py` and `enip_to_azure_iot_cert.py` downloaded from [Python-Demo](https://github.com/inhandnet/Python-Demo) to this folder.   
+  - `enip_to_azure_iot_example.py`：Based on Ethernet/IP software development kits `cpppo` and `Azure IoT Device SDK`, this demo is mainly used to collect EIP data, upload the data to the Azure IoT Hub, and remotely modify the EIP Scanner data value through the Azure IoT Hub. You only need to make some simple modifications to use `enip_to_azure_iot_example.py` in your EIP Scanner for testing.  
+    - For detailed usage methods of the software development kit cpppo, please visit [cpppo](https://github.com/pjkundert/cpppo).  
+    - For detailed usage of Azure IoT Device SDK, please visit [azure-iot-sdk-python](https://github.com/Azure/azure-iot-sdk-python/tree/master/azure-iot-device).  
   - `enip_to_azure_iot_cert.py`：It is the certificate script required to connect to the Azure IoT. You can directly use this demo without making any modification.  
 
 <a id="install-azure-iot-tools-plugin"> </a>  
@@ -156,9 +158,9 @@ In VS Code, click **Extensions**. Enter `Azure IoT Tools` in the search box and 
 - Installing `cpppo`   
 Open the project folder in VS Code. In the **Command Palette**, enter the `>SFTP:Config` command to quickly create the `sftp.json` file, which is used to establish an SFTP connection with InGateway.  
 
-  ![](images/2020-04-03-15-07-12.png)  
+  ![](images/2020-04-07-09-54-54.png)  
 
-  Configure the `sftp.json` file. For details about the configuration method, see [Establish an SFTP Connection](http://doc.ig.inhand.com.cn/zh_CN/latest/QuickStart.html#sftp).  
+  Configure the `sftp.json` file. For details about the configuration method, see [Establish an SFTP Connection](http://doc.ig.inhandnetworks.com/en/latest/QuickStart.html#set-up-an-sftp-connection).  
 
   ![](images/2020-04-03-15-07-47.png)  
 
@@ -168,19 +170,19 @@ Open the project folder in VS Code. In the **Command Palette**, enter the `>SFTP
 
   Then, you are requested to enter the IP address of the SFTP server, that is, the content on the **host** line.  
  
-  ![](images/2020-04-03-17-18-49.png)  
+  ![](images/2020-04-07-09-56-30.png)  
 
   In the **Terminal** window, you are requested to enter a password. You only need to copy the **password** from the `sftp.json` file, and paste it here.  
 
-  ![](images/2020-04-03-17-19-44.png)  
+  ![](images/2020-04-07-09-58-32.png)  
 
   The following page is displayed after an SFTP connection is successfully established with InGateway.   
 
-  ![](images/2020-04-03-17-20-17.png)  
+  ![](images/2020-04-07-09-59-30.png)  
 
-  In the Terminal window, enter the `pip install cpppo --user` command to install the cpppo dependency library. <font color=#FF0000>(Before installing the cpppo dependency library, check that InGateway has been connected to the Internet.)</font>  
+  In the **Terminal** window, enter the `pip install cpppo --user` command to install the cpppo dependency library. <font color=#FF0000>(Before installing the cpppo dependency library, check that InGateway has been connected to the Internet.)</font>  
 
-  ![](images/2020-04-03-17-21-00.png)  
+  ![](images/2020-04-07-10-00-21.png)  
 
   The following page is displayed after the successful installation.  
 
@@ -198,36 +200,36 @@ In the Terminal window, enter the `pip install azure-iot-device --user` command 
   ![](images/2020-04-03-17-37-39.png)  
 
 ## Starting the test  
-- [Configuring enip_to_azure_iot_sample.py](#configuration-enip-to-azure-iot-sample)  
+- [Configuring enip_to_azure_iot_example.py](#configuration-enip-to-azure-iot-example)  
 - [Collecting the EIP data locally](#collect-eip-data-locally)  
 - [Using Azure IoT Tools to view the uploaded data](#view-uploaded-data)  
 - [Using Azure IoT Tools to send data](#send-data)  
 
-<a id="configuration-enip-to-azure-iot-sample"> </a>  
+<a id="configuration-enip-to-azure-iot-example"> </a>  
 
-- Step 1: Configure `enip_to_azure_iot_sample.py`.  
-In VS Code, open the project folder, select `enip_to_azure_iot_sample.py`, and modify `CONNECTION_STRING` and `params` in the script based on actual conditions.  
+- Step 1: Configure `enip_to_azure_iot_example.py`.  
+In VS Code, open the project folder, select `enip_to_azure_iot_example.py`, and modify `CONNECTION_STRING` and `params` in the script based on actual conditions.  
 
-  ![](images/2020-04-05-23-55-25.png)  
+  ![](images/2020-04-07-10-13-24.png)  
 
 <a id="collect-eip-data-locally"> </a>  
 
 - Step 2: Collect the EIP data locally.   
 After the SFTP connection is successfully established with InGateway, right-click in the blank space on the left and choose **Sync-Local-> Remote** to synchronize the code to InGateway. After the successful synchronization, changes will be automatically synchronized to InGateway when you modify or delete code locally.  
  
-  ![](images/2020-04-03-17-39-01.png)  
+  ![](images/2020-04-07-10-14-27.png)  
 
-  In the Terminal window, enter `cd /var/user` to access the InGateway directory where `enip_to_azure_iot_sample.py` is located.  
+  In the **Terminal** window, enter `cd /var/user/` to access the InGateway directory where `enip_to_azure_iot_example.py` is located.  
  
-  ![](images/2020-04-03-17-40-52.png)  
+  ![](images/2020-04-07-10-15-50.png)  
 
-  Execute the `python enip_to_azure_iot_sample.py 192.168.2.23` command to run the script, where 192.168.2.23 is the IP address of EIP Scanner.  
+  Execute the `python enip_to_azure_iot_example.py 192.168.2.23` command to run the script, where 192.168.2.23 is the IP address of EIP Scanner.  
 
-  ![](images/2020-04-03-17-41-28.png)  
+  ![](images/2020-04-07-10-17-33.png)  
 
   After the data is successfully collect, the following page is displayed. Data on this page is consistent with that of EIP Scanner.  
 
-  ![](images/2020-04-03-17-51-00.png)  
+  ![](images/2020-04-07-11-12-07.png)  
 
   ![](images/2020-04-02-13-39-17.png)  
 
@@ -240,7 +242,7 @@ On the **AZURE IOT HUB** module, set the IoT Hub connection string to establish 
     
   Then, you are requested to enter **IoT Hub Connection String**.  
 
-  ![](images/2020-04-03-18-01-14.png)  
+  ![](images/2020-04-07-10-23-15.png)  
 
   You can copy the IoT Hub connection string from the **Azure IoT Hub** page.  
 
@@ -248,38 +250,38 @@ On the **AZURE IOT HUB** module, set the IoT Hub connection string to establish 
 
   After enter the IoT Hub connection string, you can see IoT Device under this IoT Hub, and its state is Connected.  
 
-  ![](images/2020-04-03-18-05-09.png)  
+  ![](images/2020-04-07-10-25-00.png)  
 
   Right-click IoT Device and choose `Start Monitoring Built-in Event Endpoint` to view the EIP data pushed from the InGateway to the IoT Hub.  
 
-  ![](images/2020-04-03-18-05-34.png)  
+  ![](images/2020-04-07-10-25-30.png)  
 
   Later, you can view the EIP data received by the IoT Hub in the **Output** window.  
 
-  ![](images/2020-04-03-18-06-11.png)  
+  ![](images/2020-04-07-10-26-04.png)  
 
 <a id="send-data"> </a>  
 
 - Step 4: Use Azure IoT Tools to send data.  
 Right-click IoT Device and choose `Send C2D Message to Device` to send data to the InGateway.  
 
-  ![](images/2020-04-03-18-06-38.png)  
+  ![](images/2020-04-07-10-27-29.png)  
 
   In the **Enter message to send to device** text box, enter `{"symbol": "INHAND:O.Data[0]", "value": 22.6, "data_type": "REAL"}`, where **symbol** is the EIP data tag, **value** is the EIP data value, and **data_type** is the EIP data type.  
 
-  ![](images/2020-04-03-18-07-09.png)  
+  ![](images/2020-04-07-10-28-02.png)  
 
   If the following log is displayed in the **Output** window, the data is sent successfully.  
 
-  ![](images/2020-04-03-18-07-58.png)  
+  ![](images/2020-04-07-10-28-49.png)  
 
   Later, you can view the data received by the InGateway in the **Terminal** window.  
 
-  ![](images/2020-04-06-00-00-13.png)  
+  ![](images/2020-04-07-10-31-02.png)  
 
   In addition, you can see in EIP Scanner that the value of INHAND:O.Data[0] is already modified.  
 
   ![](images/2020-04-02-14-28-22.png)  
 
-By now, you have collected and uploaded the EIP data to the Azure IoT, and remotely modified the EIP Scanner value through the Azure IoT.
+By now, you have collected and uploaded the EIP data to the Azure IoT Hub, and remotely modified the EIP Scanner value through the Azure IoT Hub.
 

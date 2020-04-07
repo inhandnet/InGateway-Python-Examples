@@ -1,4 +1,4 @@
-# EtherNet/IP to Azure IoT Example
+# EtherNet/IP to Azure IoT Hub Example
 
  - [概述](#概述)
  - [先决条件](#先决条件)
@@ -12,18 +12,18 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 - 通过TCP（即显式消息传递）上载和下载参数，设定值，程序和配方  
 - 通过UDP进行轮询，循环和状态更改监视    
 
-为便于客户基于InGateway二次开发实现采集EIP数据并上传至Azure云平台，映翰通提供以下三个demo示例（本文档主要对`enip_to_azure_iot_sample`进行说明）：  
-- `enip_cpppo_example`：通过EIP协议读写PLC数据  
-- `iothub_client_sample`：上传数据至Azure IoT并接收Azure IoT下发的数据  
-- `enip_to_azure_iot_sample`：采集EIP数据并上传Azure IoT以及通过Azure IoT远程修改EIP Scanner数据值。（即enip_cpppo_example和iothub_client_sample的整合版）  
+为便于客户基于InGateway二次开发实现采集EIP数据并上传至Azure IoT Hub，映翰通提供以下三个demo示例（本文档主要对`enip_to_azure_iot_example`进行说明）：  
+- `ethernetip/enip_cpppo_example`：通过EIP协议读写PLC数据  
+- `azure_iot_device/iothub_client_example`：上传数据至Azure IoT Hub并接收Azure IoT Hub下发的数据  
+- `ethernetip_to_azure_iot/enip_to_azure_iot_example`：采集EIP数据并上传Azure IoT Hub以及通过Azure IoT Hub远程修改EIP Scanner数据值。（即enip_cpppo_example和iothub_client_sample的整合版）  
 
-`enip_to_azure_iot_sample`的流程拓扑如下图所示：  
+`enip_to_azure_iot_example`的数据处理流程如下图所示：  
 
-![](images/2020-04-05-23-38-56.png)  
+![](images/2020-04-07-09-04-31.png)  
 
-示例`enip_to_azure_iot_sample`的接线拓扑如下所示:  
+示例`enip_to_azure_iot_example`的接线拓扑如下所示:  
 
-![](images/2020-04-05-23-39-19.png)
+![](images/2020-04-07-12-06-07.png)
 
 ## 先决条件
 在进行开发和测试前，你需要具备以下条件：  
@@ -133,8 +133,10 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 <a id="create-project-folder"> </a>  
 
 - 建立项目文件夹  
-建立一个“Demo test”文件夹作为项目文件夹，将从[Python-Demo](https://github.com/inhandnet/Python-Demo)下载的`enip_to_azure_iot_sample.py`和`enip_to_azure_iot_cert.py`放入项目文件夹中。  
-  - `enip_to_azure_iot_sample.py`：主要基于Ethernet/IP软件开发包`cpppo`和`Azure IoT Python SDK`实现采集EIP数据并上传Azure IoT以及通过Azure IoT远程修改EIP Scanner数据值。你只需要简单修改`enip_to_azure_iot_sample.py`即可用于你的EIP Scanner进行测试。   
+建立一个“Demo test”文件夹作为项目文件夹，将从[Python-Demo](https://github.com/inhandnet/Python-Demo)下载的`enip_to_azure_iot_example.py`和`enip_to_azure_iot_cert.py`放入项目文件夹中。  
+  - `enip_to_azure_iot_example.py`：主要基于Ethernet/IP软件开发包`cpppo`和`Azure IoT Device SDK`实现采集EIP数据并上传Azure IoT Hub以及通过Azure IoT Hub远程修改EIP Scanner数据值。你只需要简单修改`enip_to_azure_iot_example.py`即可用于你的EIP Scanner进行测试。  
+    - 软件开发包cpppo的详细使用方法请访问[cpppo](https://github.com/pjkundert/cpppo)。  
+    - Azure IoT Device SDK的详细使用方法请访问[azure-iot-sdk-python](https://github.com/Azure/azure-iot-sdk-python/tree/master/azure-iot-device)。   
   - `enip_to_azure_iot_cert.py`：连接Azure IoT所需的证书脚本，直接使用即可，无需修改。  
 
 <a id="install-azure-iot-tools-plugin"> </a>  
@@ -153,78 +155,78 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 - 安装`cpppo`  
 使用VS Code打开项目文件夹，在“命令面板”中输入`>SFTP:Config` 命令快速创建`sftp.json`文件用于建立与InGateway的SFTP连接。  
 
-  ![](images/2020-04-01-19-55-23.png)  
+  ![](images/2020-04-07-10-39-02.png)  
 
   配置`sftp.json`文件，配置方法见[建立SFTP连接](http://doc.ig.inhand.com.cn/zh_CN/latest/QuickStart.html#sftp)。  
 
-  ![](images/2020-04-01-20-34-55.png)  
+  ![](images/2020-04-07-10-39-25.png)  
 
   配置完成并保存后在“命令面板”中输入`>SFTP:Open SSH in Terminal`以连接InGateway。  
 
-  ![](images/2020-04-01-20-03-42.png)  
+  ![](images/2020-04-07-10-39-57.png)  
 
   输入后命令面板会提示你需要输入SFTP服务器的IP地址（即“host”项内容）。  
 
-  ![](images/2020-04-01-20-04-20.png)  
+  ![](images/2020-04-07-10-42-33.png)  
 
   “终端”窗口会提示你需要输入密码，你只需要将`sftp.json`文件中“password”项复制粘贴到此处即可。  
 
-  ![](images/2020-04-01-20-35-30.png)  
+  ![](images/2020-04-07-10-43-12.png)  
 
   成功与网关建立SFTP连接后如下图所示：  
 
-  ![](images/2020-04-01-20-06-20.png)  
+  ![](images/2020-04-07-10-43-36.png)  
 
   在“终端”中输入`pip install cpppo --user`命令以安装cpppo依赖库。<font color=#FF0000>(安装前请确认InGateway已经联网成功)</font>  
 
-  ![](images/2020-04-01-20-08-17.png)  
+  ![](images/2020-04-07-10-44-02.png)  
 
   安装成功后如下图所示：  
 
-  ![](images/2020-04-01-20-18-28.png)
+  ![](images/2020-04-07-10-48-14.png)
 
 <a id="install-azure-iot-sdk"> </a> 
 
 - 安装Azure IoT SDK  
 在“终端”中输入`pip install azure-iot-device --user`命令以安装Azure IoT SDK。  
 
-  ![](images/2020-04-01-20-20-40.png)  
+  ![](images/2020-04-07-11-07-25.png)  
 
   安装完成后如下图所示：  
 
-  ![](images/2020-04-01-20-26-28.png)  
+  ![](images/2020-04-07-10-49-35.png)  
 
 ## 开始测试  
-- [配置enip_to_azure_iot_sample.py](#configuration-enip-to-azure-iot-sample)  
+- [配置enip_to_azure_iot_example.py](#configuration-enip-to-azure-iot-sample)  
 - [本地采集EIP数据](#collect-eip-data-locally)  
 - [使用Azure IoT Tools查看上报数据](#view-reported-data)  
 - [使用Azure IoT Tools下发数据](#send-data)  
 
 <a id="configuration-enip-to-azure-iot-sample"> </a> 
 
-- 步骤1：配置`enip_to_azure_iot_sample.py`  
-在VS Code中打开项目文件夹并选中`enip_to_azure_iot_sample.py`，根据你的实际情况修改脚本中的`CONNECTION_STRING`和`params`参数。  
+- 步骤1：配置`enip_to_azure_iot_example.py`  
+在VS Code中打开项目文件夹并选中`enip_to_azure_iot_example.py`，根据你的实际情况修改脚本中的`CONNECTION_STRING`和`params`参数。  
 
-  ![](images/2020-04-02-12-43-48.png)  
+  ![](images/2020-04-07-10-51-16.png)  
 
 <a id="collect-eip-data-locally"> </a>
 
 - 步骤2：本地采集EIP数据   
 与InGateway建立SFTP连接成功后，在左侧空白处右键选择“Sync Local->Remote”将代码同步到InGateway，同步成功后本地修改或者删除代码时都会自动和InGateway同步。  
 
-  ![](images/2020-04-01-20-37-00.png)  
+  ![](images/2020-04-07-10-52-26.png)  
 
-  在“终端”窗口输入`cd /var/user`进入`enip_to_azure_iot_sample.py`所在的网关目录  
+  在“终端”窗口输入`cd /var/user/`进入`enip_to_azure_iot_example.py`所在的网关目录  
 
-  ![](images/2020-04-01-20-38-00.png)  
+  ![](images/2020-04-07-10-53-17.png)  
 
-  执行`python enip_to_azure_iot_sample.py 192.168.2.23`命令以运行脚本（192.168.2.23是EIP Scanner的IP地址）。  
+  执行`python enip_to_azure_iot_example.py 192.168.2.23`命令以运行脚本（192.168.2.23是EIP Scanner的IP地址）。  
 
-  ![](images/2020-04-02-13-28-11.png)  
+  ![](images/2020-04-07-10-54-52.png)  
 
   读取数据成功后如下图所示，与EIP Scanner的数据一致。  
 
-  ![](images/2020-04-02-13-34-28.png)  
+  ![](images/2020-04-07-10-56-50.png)  
 
   ![](images/2020-04-02-13-39-17.png)  
 
@@ -237,7 +239,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
     
   随后会提示你输入IoT Hub Connetion String（IoT Hub连接字符串）。  
 
-  ![](images/2020-04-02-13-48-18.png)  
+  ![](images/2020-04-07-10-58-14.png)  
 
   IoT Hub连接字符串可从“Azure IoT Hub”页面复制。  
 
@@ -245,37 +247,37 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   输入IoT Hub Connetion String后可以看到该IoT Hub下的“IoT Device”且状态为Connected。  
 
-  ![](images/2020-04-02-13-50-44.png)  
+  ![](images/2020-04-07-10-58-50.png)  
 
   右击“IoT Device”并在菜单中选择`Start Monitoring Built-in Event Endpoint`以查看网关推送到IoT Hub的EIP数据。  
 
-  ![](images/2020-04-02-13-51-53.png)  
+  ![](images/2020-04-07-10-59-16.png)  
 
   随后在“输出”窗口可以查看IoT Hub接收到的EIP数据。  
 
-  ![](images/2020-04-02-13-53-54.png)  
+  ![](images/2020-04-07-10-59-46.png)  
 
 <a id="send-data"> </a>
 
 - 步骤4：使用Azure IoT Tools下发数据  
 右击“IoT Device”并在菜单中选择`Send C2D Message to Device`以下发数据至网关。  
 
-  ![](images/2020-04-02-13-54-47.png)  
+  ![](images/2020-04-07-11-00-06.png)  
 
   在下发框中输入如下命令`{"symbol": "INHAND:O.Data[0]", "value": 22.6, "data_type": "REAL"}`（“symbol”为EIP数据标签；“value”为EIP数值；“data_type”为EIP数据类型）。  
 
-  ![](images/2020-04-02-14-00-30.png)  
+  ![](images/2020-04-07-11-00-34.png)  
 
   在“输出”窗口出现下图所示日志说明数据下发成功：  
 
-  ![](images/2020-04-02-13-57-48.png)  
+  ![](images/2020-04-07-11-01-06.png)  
 
   随后可在“终端”中查看网关接收到的下发数据。  
 
-  ![](images/2020-04-02-14-02-02.png)  
+  ![](images/2020-04-07-11-02-43.png)  
 
   同时，在EIP Scanner中可以看到INHAND:O.Data[0]的数值已被修改。  
 
   ![](images/2020-04-02-14-28-22.png)  
 
-至此，完成了采集EIP数据并上传Azure IoT以及通过Azure IoT远程修改EIP Scanner数据值。
+至此，完成了采集EIP数据并上传Azure IoT Hub以及通过Azure IoT Hub远程修改EIP Scanner数据值。
