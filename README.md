@@ -1,2 +1,3 @@
-# Python-Demo
-python demos for developers or customers
+# InGateway Python Examples
+
+Python examples for the InGateway products.
