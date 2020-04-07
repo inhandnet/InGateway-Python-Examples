@@ -136,7 +136,7 @@ For details about basic configuration operations, such as connecting the InGatew
 <a id="create-project-folder"> </a>  
 
 - Creating a project folder  
-Create a project folder named **Demo test**, and move `enip_to_azure_iot_example.py` and `enip_to_azure_iot_cert.py` downloaded from [Python-Demo](https://github.com/inhandnet/Python-Demo) to this folder.   
+Create a project folder named **Demo test**, and move `enip_to_azure_iot_example.py` and `enip_to_azure_iot_cert.py` downloaded from [InGateway-Python-Examples](https://github.com/inhandnet/InGateway-Python-Examples) to this folder.   
   - `enip_to_azure_iot_example.py`：Based on Ethernet/IP software development kits `cpppo` and `Azure IoT Device SDK`, this demo is mainly used to collect EIP data, upload the data to the Azure IoT Hub, and remotely modify the EIP Scanner data value through the Azure IoT Hub. You only need to make some simple modifications to use `enip_to_azure_iot_example.py` in your EIP Scanner for testing.  
     - For detailed usage methods of the software development kit cpppo, please visit [cpppo](https://github.com/pjkundert/cpppo).  
     - For detailed usage of Azure IoT Device SDK, please visit [azure-iot-sdk-python](https://github.com/Azure/azure-iot-sdk-python/tree/master/azure-iot-device).  
