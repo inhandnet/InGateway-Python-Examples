@@ -285,4 +285,4 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 ## FAQ
 Q1：脚本运行一段时间后，EIP数据无法上传至Azure IoT Hub了。  
 A1：请检查与Azure IoT Hub的连接是否正常，当上报消息超过8000条时可能会导致无法正常上报数据。
-![](images/2020-04-07-18-08-22.png)
+![](images/2020-04-08-17-30-53.png)
