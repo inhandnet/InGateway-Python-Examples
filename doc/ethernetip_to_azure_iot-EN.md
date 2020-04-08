@@ -29,8 +29,8 @@ The connection topology of `enip_to_azure_iot_example` is shown as follows:
 Before starting development and tests, you need to get the following items ready:   
 - Hardware  
   - InGateway  
-    - InGateway firmware version: `2.0.0.r12191` or later  
-    - InGateway SDK version: `1.3.4` or later  
+    - Firmware version: `2.0.0.r12191` or later  
+    - SDK version: `1.3.4` or later  
   - EtherNet/IP Scanner (1756-L61S & 1756-ENET/B are used in this document) and EtherNet/IP adapter  
 - Software  
   - VS Code  
@@ -138,8 +138,8 @@ For details about basic configuration operations, such as connecting the InGatew
 - Creating a project folder  
 Create a project folder named **Demo test**, and move `enip_to_azure_iot_example.py` and `enip_to_azure_iot_cert.py` downloaded from [InGateway-Python-Examples](https://github.com/inhandnet/InGateway-Python-Examples) to this folder.   
   - `enip_to_azure_iot_example.py`：Based on Ethernet/IP software development kits `cpppo` and `Azure IoT Device SDK`, this demo is mainly used to collect EIP data, upload the data to the Azure IoT Hub, and remotely modify the EIP Scanner data value through the Azure IoT Hub. You only need to make some simple modifications to use `enip_to_azure_iot_example.py` in your EIP Scanner for testing.  
-    - For detailed usage methods of the software development kit cpppo, please visit [cpppo](https://github.com/pjkundert/cpppo).  
-    - For detailed usage of Azure IoT Device SDK, please visit [azure-iot-sdk-python](https://github.com/Azure/azure-iot-sdk-python/tree/master/azure-iot-device).  
+    - For detailed usage methods of the software development kit `cpppo`, please visit [cpppo](https://github.com/pjkundert/cpppo).  
+    - For detailed usage of `Azure IoT Device SDK`, please visit [azure-iot-sdk-python](https://github.com/Azure/azure-iot-sdk-python/tree/master/azure-iot-device).  
   - `enip_to_azure_iot_cert.py`：It is the certificate script required to connect to the Azure IoT. You can directly use this demo without making any modification.  
 
 <a id="install-azure-iot-tools-plugin"> </a>  
@@ -156,7 +156,7 @@ In VS Code, click **Extensions**. Enter `Azure IoT Tools` in the search box and 
 <a id="install-cpppo"> </a>  
 
 - Installing `cpppo`   
-Open the project folder in VS Code. In the **Command Palette**, enter the `>SFTP:Config` command to quickly create the `sftp.json` file, which is used to establish an SFTP connection with InGateway.  
+Open the project folder in VS Code. In the **Command Palette**, enter the `>SFTP:Config` command to quickly create or open the `sftp.json` file, which is used to establish an SFTP connection with InGateway.  
 
   ![](images/2020-04-07-09-54-54.png)  
 
@@ -283,5 +283,9 @@ Right-click IoT Device and choose `Send C2D Message to Device` to send data to t
 
   ![](images/2020-04-02-14-28-22.png)  
 
-By now, you have collected and uploaded the EIP data to the Azure IoT Hub, and remotely modified the EIP Scanner value through the Azure IoT Hub.
+By now, you have collected and uploaded the EIP data to the Azure IoT Hub, and remotely modified the EIP Scanner value through the Azure IoT Hub.  
 
+## FAQ
+Q1: After the script runs for a while, the EIP data cannot be uploaded to Azure IoT Hub.  
+A1: Please check whether the connection to the Azure IoT Hub is normal. When the number of messages exceeds 8000, it may cause the EIP data not to be uploaded normally.
+![](images/2020-04-08-17-24-18.png)

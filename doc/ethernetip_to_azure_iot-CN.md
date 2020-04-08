@@ -29,8 +29,8 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 在进行开发和测试前，你需要具备以下条件：  
 - 硬件设备  
   - InGateway  
-    - 网关固件版本：`2.0.0.r12191`及以上  
-    - 网关SDK版本：`1.3.4`及以上  
+    - 固件版本：`2.0.0.r12191`及以上  
+    - SDK版本：`1.3.4`及以上  
   - EtherNet/IP Scanner设备（本文档使用1756-L61S & 1756-ENET/B）以及EtherNet/IP adapter设备  
 - 软件  
   - VS Code软件  
@@ -119,7 +119,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
   ![](images/2020-04-01-11-33-28.png)
 
 ### 配置开发环境  
-- [网关配置](#gateway-configuration)  
+- [InGateway配置](#gateway-configuration)  
 - [建立项目文件夹](#create-project-folder)  
 - [在VS Code中安装Azure IoT Tools插件](#install-azure-iot-tools-plugin)  
 - [安装cpppo](#install-cpppo)  
@@ -127,16 +127,16 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
 <a id="gateway-configuration"> </a>   
 
-- 网关配置  
-设备联网、软件更新、IDE软件获取等基础的配置操作请查看[MobiusPi Python Development Quick Start](http://doc.ig.inhand.com.cn/zh_CN/latest/QuickStart.html)。以下操作我们将假设你已经完成了网关的软件更新、设备联网、开启调试模式等配置。  
+- InGateway配置  
+设备联网、软件更新、IDE软件获取等基础的配置操作请查看[MobiusPi Python Development Quick Start](http://doc.ig.inhand.com.cn/zh_CN/latest/QuickStart.html)。以下操作我们将假设你已经完成了InGateway的软件更新、设备联网、开启调试模式等配置。  
 
 <a id="create-project-folder"> </a>  
 
 - 建立项目文件夹  
-建立一个“Demo test”文件夹作为项目文件夹，将从[Python-Demo](https://github.com/inhandnet/Python-Demo)下载的`enip_to_azure_iot_example.py`和`enip_to_azure_iot_cert.py`放入项目文件夹中。  
+建立一个“Demo test”文件夹作为项目文件夹，将从[InGateway-Python-Examples](https://github.com/inhandnet/InGateway-Python-Examples)下载的`enip_to_azure_iot_example.py`和`enip_to_azure_iot_cert.py`放入项目文件夹中。  
   - `enip_to_azure_iot_example.py`：主要基于Ethernet/IP软件开发包`cpppo`和`Azure IoT Device SDK`实现采集EIP数据并上传Azure IoT Hub以及通过Azure IoT Hub远程修改EIP Scanner数据值。你只需要简单修改`enip_to_azure_iot_example.py`即可用于你的EIP Scanner进行测试。  
-    - 软件开发包cpppo的详细使用方法请访问[cpppo](https://github.com/pjkundert/cpppo)。  
-    - Azure IoT Device SDK的详细使用方法请访问[azure-iot-sdk-python](https://github.com/Azure/azure-iot-sdk-python/tree/master/azure-iot-device)。   
+    - 软件开发包`cpppo`的详细使用方法请访问[cpppo](https://github.com/pjkundert/cpppo)。  
+    - `Azure IoT Device SDK`的详细使用方法请访问[azure-iot-sdk-python](https://github.com/Azure/azure-iot-sdk-python/tree/master/azure-iot-device)。   
   - `enip_to_azure_iot_cert.py`：连接Azure IoT所需的证书脚本，直接使用即可，无需修改。  
 
 <a id="install-azure-iot-tools-plugin"> </a>  
@@ -153,7 +153,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 <a id="install-cpppo"> </a> 
 
 - 安装`cpppo`  
-使用VS Code打开项目文件夹，在“命令面板”中输入`>SFTP:Config` 命令快速创建`sftp.json`文件用于建立与InGateway的SFTP连接。  
+使用VS Code打开项目文件夹，在“命令面板”中输入`>SFTP:Config` 命令快速创建或打开`sftp.json`文件用于建立与InGateway的SFTP连接。  
 
   ![](images/2020-04-07-10-39-02.png)  
 
@@ -173,7 +173,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   ![](images/2020-04-07-10-43-12.png)  
 
-  成功与网关建立SFTP连接后如下图所示：  
+  成功与InGateway建立SFTP连接后如下图所示：  
 
   ![](images/2020-04-07-10-43-36.png)  
 
@@ -216,7 +216,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   ![](images/2020-04-07-10-52-26.png)  
 
-  在“终端”窗口输入`cd /var/user/`进入`enip_to_azure_iot_example.py`所在的网关目录  
+  在“终端”窗口输入`cd /var/user/`进入`enip_to_azure_iot_example.py`所在的InGateway目录  
 
   ![](images/2020-04-07-10-53-17.png)  
 
@@ -249,7 +249,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   ![](images/2020-04-07-10-58-50.png)  
 
-  右击“IoT Device”并在菜单中选择`Start Monitoring Built-in Event Endpoint`以查看网关推送到IoT Hub的EIP数据。  
+  右击“IoT Device”并在菜单中选择`Start Monitoring Built-in Event Endpoint`以查看InGateway推送到IoT Hub的EIP数据。  
 
   ![](images/2020-04-07-10-59-16.png)  
 
@@ -260,7 +260,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 <a id="send-data"> </a>
 
 - 步骤4：使用Azure IoT Tools下发数据  
-右击“IoT Device”并在菜单中选择`Send C2D Message to Device`以下发数据至网关。  
+右击“IoT Device”并在菜单中选择`Send C2D Message to Device`以下发数据至InGateway。  
 
   ![](images/2020-04-07-11-00-06.png)  
 
@@ -272,7 +272,7 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
 
   ![](images/2020-04-07-11-01-06.png)  
 
-  随后可在“终端”中查看网关接收到的下发数据。  
+  随后可在“终端”中查看InGateway接收到的下发数据。  
 
   ![](images/2020-04-07-11-02-43.png)  
 
@@ -281,3 +281,8 @@ EtherNet/IP（以下简称为EIP）是基于TCP/IP和通用工业协议（CIP）
   ![](images/2020-04-02-14-28-22.png)  
 
 至此，完成了采集EIP数据并上传Azure IoT Hub以及通过Azure IoT Hub远程修改EIP Scanner数据值。
+
+## FAQ
+Q1：脚本运行一段时间后，EIP数据无法上传至Azure IoT Hub了。  
+A1：请检查与Azure IoT Hub的连接是否正常，当上报消息超过8000条时可能会导致无法正常上报数据。
+![](images/2020-04-07-18-08-22.png)
