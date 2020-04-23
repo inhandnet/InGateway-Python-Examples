@@ -18,7 +18,7 @@ logger.addHandler(streamHandler)
 
 # Init AWSIoTMQTTClient
 myAWSIoTMQTTClient = AWSIoTMQTTClient("myClientID2")
-hostName = "a1op1x7ys27fb0.iot.us-west-2.amazonaws.com"
+hostName = "xxxxxxx.iot.us-west-2.amazonaws.com"
 portNumber = 8883
 myAWSIoTMQTTClient.configureEndpoint(hostName, portNumber)
 CAFilePath = "rootca.crt"
