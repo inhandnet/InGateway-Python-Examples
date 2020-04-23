@@ -4,7 +4,7 @@
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 import logging
 import time
-import argparse
+import os
 import json
 
 
@@ -21,9 +21,12 @@ myAWSIoTMQTTClient = AWSIoTMQTTClient("myClientID2")
 hostName = "xxxxxxx.iot.us-west-2.amazonaws.com"
 portNumber = 8883
 myAWSIoTMQTTClient.configureEndpoint(hostName, portNumber)
-CAFilePath = "rootca.crt"
-KeyPath = "15dff6cc5e-private.pem.key"
-CertificatePath = "15dff6cc5e-certificate.pem.crt"
+
+base_path = os.path.split(os.path.realpath(__file__))[0] + "/"
+CAFilePath =  base_path +"rootca.crt"
+KeyPath = base_path +"15dff6cc5e-private.pem.key"
+CertificatePath = base_path +"15dff6cc5e-certificate.pem.crt"
+
 myAWSIoTMQTTClient.configureCredentials(CAFilePath, KeyPath, CertificatePath)
 
 # AWSIoTMQTTClient connection configuration
