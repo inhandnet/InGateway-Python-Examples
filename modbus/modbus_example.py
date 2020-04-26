@@ -390,10 +390,15 @@ class MBMaster(object):
 
 if __name__ == '__main__':
     # modbus slave settings
+    # reconnect_interval only for TCP
     mbProto = {'reconnect_interval': 15.0, 'hostname': '10.5.16.234', 'type': 'TCP', 'port': 502,
                'slave': 1, 'byte_order':'abcd'}
+    # mbProto = {'type': 'RTU', 'serialPort': "/dev/tty03", 'baudrate':9600, "bytesize": 8, "parity":"N", "stopbits":1,
+    #            'slave': 1, 'byte_order': 'abcd'}
 
     # variable settings
+    # if data_type is bit/bool, you should add register_bit key-word
+    # if write data to plc(operation with 'w'), you should add value key-word
     mbVal = [
             {'addr': 100, 'operation': 'rw', 'len': 1, 'name': 'power', 'data_type': 'bit', 'register_bit':1, 'value': 0},
             {'addr': 10001, 'operation': 'ro', 'len': 1, 'name': 'model', 'data_type': "bit", 'register_bit':1},
