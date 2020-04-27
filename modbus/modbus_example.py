@@ -398,7 +398,8 @@ class MbValHandle(object):
                 if isinstance(write_value, str):
                     write_value = eval(write_value)
                 if cmd == cst.WRITE_MULTIPLE_REGISTERS:
-                    s = self.master.execute(self.slave, cmd, mbAddr, self.len)
+                    (r_cmd, r_addr) = self.__transfer_addr(self.addr)
+                    s = self.master.execute(self.slave, r_cmd, r_addr, self.len)
                     write_value = Utility.set_bool(Utility.toWord(s[0], byte_order), self.register_bit, write_value)
                     values = [write_value, ]
                 else:
@@ -509,6 +510,7 @@ class MBMaster(object):
                         if mbEvt.value is not None:
                             mbEvt.write_data(mbEvt.value)
                     else:
+
                         mbEvt.read_data()
 
                 time.sleep(5)
@@ -534,6 +536,7 @@ if __name__ == '__main__':
             {'addr': 30001, 'operation': 'ro', 'name': 'model', 'data_type': "bit", 'register_bit':1},
             {'addr': 30002, 'operation': 'ro', 'name': 'temperature', 'data_type': "int"},
             {'addr': 40001, 'operation': 'rw', 'name': 'speed', 'data_type': "word", 'write_value': 20},
+            {'addr': 40011, 'operation': 'rw', 'name': 'speed222', 'data_type': "bit", 'register_bit':10, 'write_value': 1},
             {'addr': 40003, 'operation': 'rw', 'len': 4, 'name': 'pressure', 'data_type': 'string', 'write_value': 'cvbn'},
         ]
 
