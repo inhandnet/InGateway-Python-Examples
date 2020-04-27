@@ -179,6 +179,8 @@ class MbValHandle(object):
         self.operation = operation
         self.register_bit = register_bit
         self.value = value
+        self.float_repr = 2
+        self.command = None
 
     def __transfer_addr(self, address):
         """
@@ -231,15 +233,113 @@ class MbValHandle(object):
             return None, None
         return mb_type, var_addr
 
+    def __get_mb_value(self, r, byte_order):
+        """
+         To give the value of according variable configuration
+        :param v:
+        :param r:
+        :param byte_order:
+        :return:
+        """
+        if re.match("string", self.data_type, re.M | re.I):
+            var = []
+            for a in r:
+                h_byte = ((a & 0xff00) >> 8)
+                l_byte = (a & 0xff)
+                if not h_byte and not l_byte:
+                    break
+                h_char = chr(h_byte) if h_byte else ""
+                l_char = chr(l_byte) if l_byte else ""
+                if re.search(r'(^ab($|cd$))|(^cdab$)', byte_order) is not None:
+                    var.append(h_char)
+                    var.append(l_char)
+                else:
+                    var.append(l_char)
+                    var.append(h_char)
+            # logger.debug("get string data : %s" % ''.join(var))
+            return ''.join(var)
+        elif re.match("bit", self.data_type, re.M | re.I):
+            data = r[0]
+            if self.command == cst.READ_INPUT_REGISTERS or self.command == cst.READ_HOLDING_REGISTERS:
+                data = Utility.get_bool(Utility.toWord(data, byte_order), self.register_bit)
+            return 1 if data else 0
+        elif re.match("bool", self.data_type, re.M | re.I):
+            data = r[0]
+            if self.command == cst.READ_INPUT_REGISTERS or self.command == cst.READ_HOLDING_REGISTERS:
+                data = Utility.get_bool(Utility.toWord(data, byte_order), self.register_bit)
+            return True if data else False
+        elif re.match("dword", self.data_type, re.M | re.I) or re.match("ulong", self.data_type,
+                                                                     re.M | re.I):  # unsigned 32 bit
+            h0 = ((r[0] & 0xff00) >> 8)
+            l0 = (r[0] & 0xff)
+            h1 = ((r[1] & 0xff00) >> 8)
+            l1 = (r[1] & 0xff)
+            return Utility.toDWord(l0, h0, l1, h1, byte_order, self.data_type)
+        elif re.match("word", self.data_type, re.M | re.I) or re.match("ushort", self.data_type,
+                                                                    re.M | re.I):  # unsigned 16 bit
+            h_byte = ((r[0] & 0xff00) >> 8)
+            l_byte = (r[0] & 0xff)
+            if re.search(r'(^ba($|dc$))|(^dcba$)', byte_order) is not None:
+                t = ((l_byte << 8) & 0xff00) | h_byte
+                return t
+            else:
+                return r[0]
+        elif re.match("dint", self.data_type, re.M | re.I) or re.match("long", self.data_type,
+                                                                    re.M | re.I):  # signed 32 bit
+            h0 = ((r[0] & 0xff00) >> 8)
+            l0 = (r[0] & 0xff)
+            h1 = ((r[1] & 0xff00) >> 8)
+            l1 = (r[1] & 0xff)
+            return Utility.toDInt(l0, h0, l1, h1, byte_order, self.data_type)
+        elif re.match("int", self.data_type, re.M | re.I) or re.match("short", self.data_type,
+                                                                   re.M | re.I):  # signed 16 bit
+            h_byte = ((r[0] & 0xff00) >> 8)
+            l_byte = (r[0] & 0xff)
+            if re.search(r'(^ba($|dc$))|(^dcba$)', byte_order) is not None:
+                t = (((l_byte & 0x7f) << 8) & 0xff00) | h_byte
+                return t if (l_byte & 0x80) == 0 else (t - 32768)
+            else:
+                return r[0] if (r[0] & 0x8000) == 0 else r[0] - 65536
+        elif re.match("float", self.data_type, re.M | re.I):  # float 32 bit
+            h0 = ((r[0] & 0xff00) >> 8)
+            l0 = (r[0] & 0xff)
+            h1 = ((r[1] & 0xff00) >> 8)
+            l1 = (r[1] & 0xff)
+            return Utility.toFloat(l0, h0, l1, h1, byte_order, self.data_type, self.float_repr)  # ieee754 converting
+        elif re.match("sint", self.data_type, re.M | re.I):
+            h_byte = ((r[0] & 0xff00) >> 8)
+            l_byte = (r[0] & 0xff)
+            if re.search(r'(^ba($|dc$))|(^dcba$)', byte_order) is not None:
+                return [Utility.toSint(l_byte), Utility.toSint(h_byte)]
+            else:
+                return [Utility.toSint(h_byte), Utility.toSint(l_byte)]
+        elif re.match("byte", self.data_type, re.M | re.I):
+            h_byte = ((r[0] & 0xff00) >> 8)
+            l_byte = (r[0] & 0xff)
+            if re.search(r'(^ba($|dc$))|(^dcba$)', byte_order) is not None:
+                return [l_byte, h_byte]
+            else:
+                return [h_byte, l_byte]
+        else:
+            var = []
+            return var
+
     def read_data(self):
         """
         read each of modbus registers
         :return:
         """
         (cmd, addr) = self.__transfer_addr(self.addr)
+        self.command = cmd
         try:
             val = dict()
-            val['value'] = self.master.execute(self.slave, cmd, addr, self.len)
+            # print("reas slave: %s, cmd: %s, addr:%s, len: %s" % (self.slave, cmd, addr, self.len))
+            var_raw_data = self.master.execute(self.slave, cmd, addr, self.len)
+            if self.len == 1:
+                var_raw_data = [var_raw_data[0], ]
+            else:
+                var_raw_data = var_raw_data[0: self.len]
+            val['value'] = self.__get_mb_value(var_raw_data, self.byte_order)
             val['timestamp'] = int(time.time())
             val['name'] = self.name
             print("read data: %s" % val)
@@ -327,7 +427,7 @@ class MBMaster(object):
         self.stat = "init"
 
     def init(self):
-        print("len(self.mbVal): %s" % len(self.mbVal))
+        print("Found %s vars" % len(self.mbVal))
         if len(self.mbVal) == 0:
             logging.error("init modbus  error")
             return False
@@ -353,13 +453,41 @@ class MBMaster(object):
                 reg_bit = 0
                 if re.match("bit", mb['data_type'], re.M | re.I) or re.match("bool", mb['data_type'], re.M | re.I):
                     reg_bit = mb['register_bit']
-            except Exception as e:
-                print("set bit/bool register_bit=0, %s" % e)
-            value = mb['value'] if 'value' in mb else None
+            except Exception:
+                pass
+                # print("set bit/bool register_bit=0, %s" % e)
+            write_value = mb['write_value'] if 'write_value' in mb else None
+            print("init var: %s" % mb)
+            mb['len'] = self.__get_block_length(mb['data_type'], mb["len"] if "len" in mb else 1)
             mbPoll = MbValHandle(self.master, self.mbProto['slave'], mb['name'], mb['addr'], mb['len'],
-                                 mb['data_type'], self.mbProto['byte_order'], mb['operation'], reg_bit, value)
+                                 mb['data_type'], self.mbProto['byte_order'], mb['operation'], reg_bit, write_value)
             self.instance_list.append(mbPoll)
         return True
+
+    def __get_block_length(self, data_type, size=1):
+        if re.match("bool", data_type, re.M | re.I) \
+                or re.match("bit", data_type, re.M | re.I) \
+                or re.match("byte", data_type, re.M | re.I) \
+                or re.match("sint", data_type, re.M | re.I) \
+                or re.match("word", data_type, re.M | re.I) \
+                or re.match("int", data_type, re.M | re.I) \
+                or re.match("ushort", data_type, re.M | re.I) \
+                or re.match("short", data_type, re.M | re.I):
+            return 1
+        elif re.match("dword", data_type, re.M | re.I) \
+                or re.match("dint", data_type, re.M | re.I) \
+                or re.match("real", data_type, re.M | re.I) \
+                or re.match("float", data_type, re.M | re.I) \
+                or re.match("long", data_type, re.M | re.I) \
+                or re.match("ulong", data_type, re.M | re.I):
+            return 2
+        elif re.match("bcd", data_type, re.M | re.I):
+            return 2
+        elif re.match("string", data_type, re.M | re.I):
+            return int((size if (size % 2) == 0 else size + 1) / 2)
+        else:
+            print("unknown data type")
+            return 0
 
     def run(self):
         """
@@ -397,14 +525,16 @@ if __name__ == '__main__':
     #            'slave': 1, 'byte_order': 'abcd'}
 
     # variable settings
-    # if data_type is bit/bool, you should add register_bit key-word
-    # if write data to plc(operation with 'w'), you should add value key-word
+    # if data_type is bit/bool, you should add register_bit key-word except the address
+    # is between 1~10000、10001~20000、110001~165535
+    # if data_type is string you should add len key-word
+    # if write data to plc(operation with 'w'), you should add write_value key-word
     mbVal = [
-            {'addr': 100, 'operation': 'rw', 'len': 1, 'name': 'power', 'data_type': 'bit', 'register_bit':1, 'value': 0},
-            {'addr': 10001, 'operation': 'ro', 'len': 1, 'name': 'model', 'data_type': "bit", 'register_bit':1},
-            {'addr': 30001, 'operation': 'ro', 'len': 20, 'name': 'temperature', 'data_type': "int"},
-            {'addr': 40001, 'operation': 'rw', 'len': 1, 'name': 'speed', 'data_type': "word", 'value': 20},
-            {'addr': 40003, 'operation': 'rw', 'len': 4, 'name': 'speed', 'data_type': 'string', 'value': 'newv'},
+            {'addr': 100, 'operation': 'rw', 'name': 'power', 'data_type': 'bit', 'write_value': 0},
+            {'addr': 30001, 'operation': 'ro', 'name': 'model', 'data_type': "bit", 'register_bit':1},
+            {'addr': 30002, 'operation': 'ro', 'name': 'temperature', 'data_type': "int"},
+            {'addr': 40001, 'operation': 'rw', 'name': 'speed', 'data_type': "word", 'write_value': 20},
+            {'addr': 40003, 'operation': 'rw', 'len': 4, 'name': 'pressure', 'data_type': 'string', 'write_value': 'cvbn'},
         ]
 
     mbMaster = MBMaster(mbProto, mbVal)
