@@ -61,7 +61,7 @@ class VarHandle(object):
                 self.register_bit = self.var_dict['register_bit']
             else:
                 self.register_bit = 0
-            self.value = self.var_dict['value'] if 'value' in self.var_dict else None
+            self.value = self.var_dict['write_value'] if 'write_value' in self.var_dict else None
             self.dbnumber = int(self.var_dict['dbnumber']) if 'dbnumber' in self.var_dict else 0
 
             self.float_repr = int(self.var_dict['float_repr']) if 'float_repr' in self.var_dict else 2
@@ -325,8 +325,8 @@ if __name__ == '__main__':
         {'name': 'tem', 'register_type': 'Q', 'addr': 6, 'data_type': 'dword', 'operation': 'ro'},
         {'name': 'pres', 'register_type': 'DB', 'dbnumber': 6, 'addr': 274, 'data_type': 'dword', 'operation': 'ro'},
 
-        {'name': 'energ', 'register_type': 'M', 'addr': 6, 'data_type': 'dword', 'operation': 'rw', 'value': 220},
-        {'name': 'switch', 'register_type': 'DB', 'dbnumber': 6, 'addr': 18, 'data_type': 'string', 'operation': 'ro', 'value': "test", 'len': 4},
+        {'name': 'energ', 'register_type': 'M', 'addr': 6, 'data_type': 'dword', 'operation': 'rw', 'write_value': 220},
+        {'name': 'switch', 'register_type': 'DB', 'dbnumber': 6, 'addr': 18, 'data_type': 'string', 'operation': 'ro', 'write_value': "test", 'len': 4},
 
     ]
 
