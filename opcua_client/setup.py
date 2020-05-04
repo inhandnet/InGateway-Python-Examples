@@ -9,9 +9,9 @@ entry_points： 程序执行的入口
 '''
 from setuptools import setup, find_packages
 setup(name='ReplaceWithYourAppName',
+      version='0.0.1',
       sdk_version='0.0.0',
-      version='0.0.0',
-      author='Inhand',
+      author='InHand',
       author_email='',
       description='',
       license='PRIVATE',

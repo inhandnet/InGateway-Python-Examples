@@ -20,6 +20,26 @@ AREA_CODE_MAP = {
                     "T": snap7.snap7types.S7AreaTM
                 }
 
+# ISO-on-TCP settings
+scanner = {'name': 'iso_on_tcp_device', 'ip': '10.5.16.73', 'port': 102, 'rack': 0, 'slot': 0}
+
+# variable settings
+vars = [
+    {'name': 'power', 'register_type': 'Q', 'addr': 0, 'data_type': 'bool', 'operation': 'ro',
+     'register_bit': 1},
+    {'name': 'water', 'register_type': 'DB', 'dbnumber': 6, 'addr': 14, 'data_type': 'float',
+     'operation': 'ro'},
+
+    {'name': 'tem', 'register_type': 'Q', 'addr': 6, 'data_type': 'dword', 'operation': 'ro'},
+    {'name': 'pres', 'register_type': 'DB', 'dbnumber': 6, 'addr': 274, 'data_type': 'dword',
+     'operation': 'ro'},
+
+    {'name': 'energ', 'register_type': 'M', 'addr': 6, 'data_type': 'dword', 'operation': 'rw',
+     'write_value': 220},
+    {'name': 'switch', 'register_type': 'DB', 'dbnumber': 6, 'addr': 18, 'data_type': 'string',
+     'operation': 'ro', 'write_value': "test", 'len': 4},
+
+]
 
 # Configure logging
 logger = logging.getLogger()
@@ -314,21 +334,5 @@ class Adapter(object):
 
 
 if __name__ == '__main__':
-    # ISO-on-TCP settings
-    scanner = {'name':'iso_on_tcp_device', 'ip': '10.5.16.73', 'port': 102, 'rack': 0, 'slot': 0}
-
-    # variable settings
-    vars = [
-        {'name': 'power', 'register_type': 'Q', 'addr': 0, 'data_type': 'bool', 'operation': 'ro', 'register_bit': 1},
-        {'name': 'water', 'register_type': 'DB', 'dbnumber': 6, 'addr': 14, 'data_type': 'float', 'operation': 'ro'},
-
-        {'name': 'tem', 'register_type': 'Q', 'addr': 6, 'data_type': 'dword', 'operation': 'ro'},
-        {'name': 'pres', 'register_type': 'DB', 'dbnumber': 6, 'addr': 274, 'data_type': 'dword', 'operation': 'ro'},
-
-        {'name': 'energ', 'register_type': 'M', 'addr': 6, 'data_type': 'dword', 'operation': 'rw', 'write_value': 220},
-        {'name': 'switch', 'register_type': 'DB', 'dbnumber': 6, 'addr': 18, 'data_type': 'string', 'operation': 'ro', 'write_value': "test", 'len': 4},
-
-    ]
-
     ad = Adapter(scanner, vars)
     ad.run()
