@@ -39,7 +39,7 @@ def message_listener(device_client):
         print(message.custom_properties)
 
 
-def iothub_client_telemetry_example_run():
+def iothub_client_example():
 
     try:
         client = iothub_client_init()
@@ -79,4 +79,4 @@ def iothub_client_telemetry_example_run():
 if __name__ == '__main__':
     print ( "IoT Hub Quickstart #1 - Simulated device" )
     print ( "Press Ctrl-C to exit" )
-    iothub_client_telemetry_example_run()
+    iothub_client_example()
