@@ -330,5 +330,5 @@ if __name__ == '__main__':
 
     ]
 
-    Adapter = Adapter(scanner, vars)
-    Adapter.run()
+    ad = Adapter(scanner, vars)
+    ad.run()
