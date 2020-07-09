@@ -29,8 +29,8 @@ Before starting development and testing, ensure that the following items are rea
 
 ## Environment Preparation
 
-- [Configuring the Modbus simulator](#配置modbus模拟器)
-- [Configuring the development environment](#配置开发环境)
+  - [Configuring the Modbus simulator](#configuring-the-modbus-simulator)
+  - [Configuring the development environment](#configuring-the-development-environment)
 
 ### Configuring the Modbus simulator
 
