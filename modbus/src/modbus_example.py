@@ -14,10 +14,18 @@ import time
 import re
 import math
 
+# Configure logging
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+streamHandler = logging.StreamHandler()
+formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(filename)s %(lineno)d]: %(message)s')
+streamHandler.setFormatter(formatter)
+logger.addHandler(streamHandler)
+
 # modbus slave settings
 # reconnect_interval only for TCP
-mbProto = {'reconnect_interval': 15.0, 'hostname': '10.5.16.234', 'type': 'TCP', 'port': 502,
-           'slave': 1, 'byte_order':'abcd'}
+mbProto = {'reconnect_interval': 15.0, 'hostname': '192.168.2.10', 'type': 'TCP', 'port': 503,
+           'slave': 1, 'byte_order':'cdab'}
 # mbProto = {'type': 'RTU', 'serialPort': "/dev/tty03", 'baudrate':9600, "bytesize": 8, "parity":"N", "stopbits":1,
 #            'slave': 1, 'byte_order': 'abcd'}
 
@@ -27,11 +35,9 @@ mbProto = {'reconnect_interval': 15.0, 'hostname': '10.5.16.234', 'type': 'TCP',
 # if data_type is string you should add len key-word
 # if write data to plc(operation with 'w'), you should add write_value key-word
 mbVal = [
-        {'addr': 100, 'operation': 'rw', 'name': 'power', 'data_type': 'bit', 'write_value': 0},
+        {'addr': 1, 'operation': 'rw', 'name': 'power', 'data_type': 'bit', 'write_value': 0},
         {'addr': 30001, 'operation': 'ro', 'name': 'model', 'data_type': "bit", 'register_bit':1},
-        {'addr': 30002, 'operation': 'ro', 'name': 'temperature', 'data_type': "int"},
         {'addr': 40001, 'operation': 'rw', 'name': 'speed', 'data_type': "word", 'write_value': 20},
-        {'addr': 40011, 'operation': 'rw', 'name': 'speed222', 'data_type': "bit", 'register_bit':10, 'write_value': 1},
         {'addr': 40003, 'operation': 'rw', 'len': 4, 'name': 'pressure', 'data_type': 'string', 'write_value': 'cvbn'}
 ]
 
@@ -354,7 +360,7 @@ class MbValHandle(object):
         self.command = cmd
         try:
             val = dict()
-            # print("reas slave: %s, cmd: %s, addr:%s, len: %s" % (self.slave, cmd, addr, self.len))
+            # logger.info("reas slave: %s, cmd: %s, addr:%s, len: %s" % (self.slave, cmd, addr, self.len))
             var_raw_data = self.master.execute(self.slave, cmd, addr, self.len)
             if self.len == 1:
                 var_raw_data = [var_raw_data[0], ]
@@ -363,9 +369,9 @@ class MbValHandle(object):
             val['value'] = self.__get_mb_value(var_raw_data, self.byte_order)
             val['timestamp'] = int(time.time())
             val['name'] = self.name
-            print("read data: %s" % val)
+            logger.info("read data: %s" % val)
         except Exception as e:
-            logging.error("read error: %s" % (e, ))
+            logger.error("read error: %s" % (e, ))
     
     def write_data(self, write_value):
         """
@@ -427,12 +433,12 @@ class MbValHandle(object):
                     values = write_value
             else:
                 raise ValueError("Data type %s are not supported." % self.data_type)
-            print("Write var [modbus] name: %s, cmd: %s, mbAddr: %s, value: %s" % (
+            logger.info("Write var [modbus] name: %s, cmd: %s, mbAddr: %s, value: %s" % (
                 self.name, cmd, mbAddr, values))
             self.master.execute(self.slave, cmd, mbAddr, output_value=values)
-            print("write data: %s --> %s ok" % (values, mbAddr))
+            logger.info("write data: %s --> %s ok" % (values, mbAddr))
         except Exception as e:
-            logging.error("write error: %s" % (e, ))
+            logger.error("write error: %s" % (e, ))
 
 
 class MBMaster(object):
@@ -449,16 +455,16 @@ class MBMaster(object):
         self.stat = "init"
 
     def init(self):
-        print("Found %s vars" % len(self.mbVal))
+        logger.info("Found %s vars" % len(self.mbVal))
         if len(self.mbVal) == 0:
-            logging.error("init modbus  error")
+            logger.error("init modbus  error")
             return False
         if self.mbProto['type'] == 'TCP':
             try:
                 self.master = modbus_tcp.TcpMaster(self.mbProto['hostname'], self.mbProto['port'],
                                                    self.mbProto['reconnect_interval'])
             except modbus_tk.modbus.ModbusError as exc:
-                logging.error("error %s- Code=%d", exc, exc.get_exception_code())
+                logger.error("error %s- Code=%d", exc, exc.get_exception_code())
                 return False
         elif self.mbProto['type'] == 'RTU':
             try:
@@ -468,7 +474,7 @@ class MBMaster(object):
                 self.master = modbus_rtu.RtuMaster(serial_instance)
                 ret = self.master.open()
             except modbus_tk.modbus.ModbusError as exc:
-                logging.error("error %s- Code=%d", exc, exc.get_exception_code())
+                logger.error("error %s- Code=%d", exc, exc.get_exception_code())
                 return False
         for mb in self.mbVal:
             try:
@@ -477,9 +483,9 @@ class MBMaster(object):
                     reg_bit = mb['register_bit']
             except Exception:
                 pass
-                # print("set bit/bool register_bit=0, %s" % e)
+                # logger.info("set bit/bool register_bit=0, %s" % e)
             write_value = mb['write_value'] if 'write_value' in mb else None
-            print("init var: %s" % mb)
+            logger.info("init var: %s" % mb)
             mb['len'] = self.__get_block_length(mb['data_type'], mb["len"] if "len" in mb else 1)
             mbPoll = MbValHandle(self.master, self.mbProto['slave'], mb['name'], mb['addr'], mb['len'],
                                  mb['data_type'], self.mbProto['byte_order'], mb['operation'], reg_bit, write_value)
@@ -508,7 +514,7 @@ class MBMaster(object):
         elif re.match("string", data_type, re.M | re.I):
             return int((size if (size % 2) == 0 else size + 1) / 2)
         else:
-            print("unknown data type")
+            logger.info("unknown data type")
             return 0
 
     def run(self):
@@ -536,7 +542,7 @@ class MBMaster(object):
 
                 time.sleep(5)
         except Exception as e:
-            print("Found error: %s" % e)
+            logger.info("Found error: %s" % e)
 
 
 if __name__ == '__main__':
