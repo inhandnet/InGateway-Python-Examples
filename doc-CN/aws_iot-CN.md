@@ -5,7 +5,7 @@
   - [环境准备](#environmental-preparation)
     - [配置AWS IoT](#configure-aws-iot)
     - [配置开发环境](#configure-the-development-environment)
-  - [开始测试](#start-testing)
+  - [验证数据上报和下发](#start-testing)
   - [FAQ](#faq)
 
 
@@ -19,8 +19,12 @@
 ## 先决条件
 在进行开发和测试前，你需要具备以下条件：  
 - InGateway  
-  - 固件版本：`2.0.0.r12644`及以上（请联系客服获取）  
-  - Python3 SDK版本：`1.3.9`及以上（请联系客服获取）    
+  - 固件版本
+    - IG902：`IG9-V2.0.0.r12644`及以上（请联系客服获取）  
+    - IG501：`IG5-V2.0.0.r12884`及以上（请联系客服获取）
+  - Python3 SDK版本
+    - IG902：`py3sdk-V1.3.9_Edge-IG9`及以上（请联系客服获取）    
+    - IG501：`py3sdk-V1.3.9_Edge-IG5`及以上（请联系客服获取）
 - VS Code软件   
 - AWS IoT账号  
 
@@ -174,15 +178,15 @@
 
 <a id="start-testing"> </a>
 
-## 开始测试
+## 验证数据上报和下发
 
-- [安装Azure IoT SDK](#install-azure-iot-sdk)   
+- [安装AWS IoT Device SDK](#install-aws-iot-sdk)   
 - [修改代码](#modify-the-code)  
-- [调试代码](#debug-code)
+- [调试代码](#debug-code)  
 - [在AWS IoT中查看上报数据](#view-reported-data)  
 - [在AWS IoT中下发数据](#send-data)  
 
-<a id="install-azure-iot-sdk"> </a> 
+<a id="install-aws-iot-sdk"> </a> 
 
 - 步骤1：安装AWS IoT Device SDK  
 
