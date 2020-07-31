@@ -5,7 +5,7 @@
   - [环境准备](#environment-preparation)
     - [配置Modbus模拟器](#configuring-the-modbus-simulator)
     - [配置开发环境](#configuring-the-development-environment)
-  - [开始测试](#test-procedure)
+  - [验证数据读写](#test-procedure)
 
 <a id="overview"> </a>  
 
@@ -15,15 +15,19 @@ Modbus是master/slave架构的串行通信协议，允许多个设备连接在�
 2. 易于部署和维护
 3. 对供应商来说，修改移动本地的比特或字节没有很多限制
  
-映翰通提供`modbus`示例以便于客户基于InGateway二次开发实现modbus数据采集。该示例主要基于`modbus_tk`实现了InGateway作为Modbus master通过Modbus TCP和Modbus RTU协议读写Modbus slave的01、02、03和04功能码的Modbus变量，支持的变量类型包括bit、word、string等数据类型。`modbus_tk`的详细使用方法请访问[modbus_tk](https://github.com/ljean/modbus-tk/)。  <font color=#FF0000>注意：请勿同时运行`device_supervisor app`和`demo示例`，否则可能导致代码运行异常。</font> 
+映翰通提供`modbus`示例以便于客户基于InGateway二次开发实现Modbus数据采集。该示例主要基于`modbus_tk`实现了InGateway作为Modbus master通过Modbus TCP和Modbus RTU协议读写Modbus slave的01、02、03和04功能码的Modbus变量，支持的变量类型包括bit、word、string等数据类型。`modbus_tk`的详细使用方法请访问[modbus_tk](https://github.com/ljean/modbus-tk/)。  <font color=#FF0000>注意：请勿同时运行`device_supervisor app`和`demo示例`，否则可能导致代码运行异常。</font> 
 
 <a id="prerequisites"> </a>  
 
 ## 先决条件
 在进行开发和测试前，你需要具备以下条件：  
 - InGateway  
-  - 固件版本：`2.0.0.r12644`及以上（请联系客服获取）  
-  - SDK版本：`1.3.9`及以上（请联系客服获取）  
+  - 固件版本
+    - IG902：`IG9-V2.0.0.r12644`及以上（请联系客服获取）  
+    - IG501：`IG5-V2.0.0.r12884`及以上（请联系客服获取）
+  - Python3 SDK版本
+    - IG902：`py3sdk-V1.3.9_Edge-IG9`及以上（请联系客服获取）    
+    - IG501：`py3sdk-V1.3.9_Edge-IG5`及以上（请联系客服获取） 
 - VS Code软件   
 - Modbus模拟软件或Modbus PLC（本文档使用Modbus模拟软件`mod_RSsim`进行说明，你可以访问 https://sourceforge.net/projects/modrssim2/ 下载该模拟器软件）  
 
@@ -56,11 +60,11 @@ Modbus是master/slave架构的串行通信协议，允许多个设备连接在�
 
     IG902串口端子接线说明如下图：  
     
-    ![](images/2020-01-09-18-47-30.png)  
+    ![](images/2020-06-11-15-58-40.png)  
 
     IG501串口端子接线说明如下图：  
 
-    ![](images/2020-03-11-11-38-45.png)
+    ![](images/2020-05-05-16-09-33.png)
 
 
 - 步骤2：配置`mod_RSsim`软件  
@@ -121,7 +125,7 @@ Modbus是master/slave架构的串行通信协议，允许多个设备连接在�
 
 <a id="test-procedure"> </a>  
   
-## 开始测试
+## 验证数据读写
 - [安装modbus_tk](#installation-modbus-tk)  
 - [修改Modbus slave参数](#modify-the-code)  
 - [调试代码](#debug-code)  

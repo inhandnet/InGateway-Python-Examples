@@ -5,7 +5,7 @@
   - [Environment Preparation](#environment-preparation)
     - [Configuring the Modbus simulator](#configuring-the-modbus-simulator)
     - [Configuring the development environment](#configuring-the-development-environment)
-  - [Test Procedure](#test-procedure)
+  - [Verify data read and write](#test-procedure)
 
 ## Overview
 
@@ -22,8 +22,12 @@ InHand Networks provides a `modbus` example to help you complete secondary devel
 Before starting development and testing, ensure that the following items are ready:
 
 - InGateway
-  - Firmware version: `2.0.0.r12644` or later (Contact the customer service to obtain the firmware file.)
-  - SDK version: `1.3.9` or later (Contact the customer service to obtain this SDK.)
+  - Firmware version
+    - IG902: `IG9-V2.0.0.r12644` or later (Contact the customer service to obtain the firmware file.)
+    - IG501: `IG5-V2.0.0.r12884` or later (Contact the customer service to obtain the firmware file.)
+  - Python3 SDK version
+    - IG902: `py3sdk-V1.3.9_Edge-IG9` or later (Contact the customer service to obtain this SDK.)
+    - IG501: `py3sdk-V1.3.9_Edge-IG5` or later (Contact the customer service to obtain this SDK.)
 - VS Code software
 - Modbus simulator software or Modbus PLC (This example uses Modbus simulator software `mod_RSsim`, which is available on https://sourceforge.net/projects/modrssim2/.)
 
@@ -56,11 +60,11 @@ Skip this section if you have configured the Modbus slave. The following procedu
 
     The following figure shows the serial port connection on an IG902.
     
-    ![](images/2020-04-28-11-14-55.png)
+    ![](images/2020-07-13-11-36-38.png)
     
     The following figure shows the serial port connection on an IG501.
     
-    ![](images/2020-04-28-11-15-11.png)
+    ![](images/2020-07-16-13-46-32.png)
 
 - Step 2: Configure the `mod_RSsim` software.
   
@@ -118,7 +122,9 @@ Skip this section if you have configured the Modbus slave. The following procedu
     - `modbus_example.py`: runs `modbus_tk` on the InGateway, so that the InGateway can act as the Modbus master to read and write variables of Modbus function codes 01, 02, 03, and 04 on the Modbus slave using the Modbus TCP and Modbus RTU protocols.
   - `setup.py`: app description file.
 
-## Test Procedure
+<a id="test-procedure"> </a> 
+
+## Verify data read and write
 
 - [Installing modbus\_tk](#installation-modbus-tk)
 - [Modifying parameters of the Modbus slave](#modify-the-code)
