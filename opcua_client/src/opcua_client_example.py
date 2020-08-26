@@ -6,25 +6,22 @@
 # Created on 2020/04
 # @author: InHand
 # */
-
+# for detail info, see https://pypi.org/project/opcua/
 import opcua
 import time
 
 def opcua_client_example():
-    client = opcua.Client(True)
+    end_point = "opc.tcp://10.5.16.234:53530/OPCUA/SimulationServer"
+    client = opcua.Client(end_point)
 
-    end_point = "opc.tcp://127.0.0.1:53531/OPCUA/SimulationServer"
-    client.connect(end_point)
-
-    objects = client.get_objects_node()
-    print("Children of objects(%s) are: %s" %(objects, objects.get_children()))
+    client.connect()
 
     while True:
-        node_id = "ns=2;i=2002;"
+        node_id = "ns=6;s=DataItem_0000"
         var = client.get_node(node_id)
-        time.sleep(5)
 
         print("Read value of variable(%s) is: %s" % (var, var.get_value()))
+        time.sleep(5)
 
     client.disconnect()
 
